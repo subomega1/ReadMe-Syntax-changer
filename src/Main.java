@@ -1,7 +1,3 @@
-import java.io.File;
-import java.io.FileReader;
-import java.io.BufferedReader;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
@@ -17,36 +13,23 @@ public class Main {
         handlers.put("-it{", new ItalicHandler());
         handlers.put("-cl{", new CodeHandler());
 
-        System.out.println("Give a path:");
+        System.out.println("Enter your input:");
         String input = scanner.nextLine();
-        File file = new File(input);
 
-        if (file.exists()) {
-            try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
-                String line;
-                while ((line = reader.readLine()) != null) { // Read entire lines
-                    int colonIndex = line.indexOf(":");
-                    String l = (colonIndex != -1) ? line.substring(colonIndex + 1).trim() : line.trim(); // Safely extract text after ":"
-                    boolean handled = false;
-                    for (Map.Entry<String, KeyHandler> entry : handlers.entrySet()) {
-                        String key = entry.getKey();
-                        KeyHandler handler = entry.getValue();
-                        if (l.contains(key)) {
-                            handled = true;
-                            handler.handle(l);
-                            break;
-                        }
-                    }
-                    if (!handled) {
-                        System.out.println(l); // Print the line if no handler is found
-                    }
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-                System.out.println("Error reading the file");
+        // Process the input
+        boolean handled = false;
+        for (Map.Entry<String, KeyHandler> entry : handlers.entrySet()) {
+            String key = entry.getKey();
+            KeyHandler handler = entry.getValue();
+            if (input.contains(key)) {
+                handled = true;
+                handler.handle(input);
+                break;
             }
-        } else {
-            System.out.println("File not found");
+        }
+
+        if (!handled) {
+            System.out.println(input); // Print the input if no handler is found
         }
 
         scanner.close();  // Close the scanner to avoid resource leaks
